@@ -3,7 +3,7 @@ package controller;
 import entity.User;
 import java.util.List;
 import java.util.Optional;
-import model.UserTableModel;
+import repository.UserTableModel;
 import view.View;
 
 public class Controller {

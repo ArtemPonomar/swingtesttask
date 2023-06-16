@@ -1,6 +1,6 @@
 import controller.Controller;
 import javax.swing.SwingUtilities;
-import model.UserTableModel;
+import repository.UserTableModel;
 import view.View;
 
 public class Main {

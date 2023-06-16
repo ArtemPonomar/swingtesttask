@@ -1,4 +1,4 @@
-package model;
+package repository;
 
 import entity.User;
 import javax.swing.table.DefaultTableModel;
@@ -11,6 +11,10 @@ public class UserTableModel extends DefaultTableModel {
     private static final int PHONE_NUMBERS_COLUMN = 1;
     private static final String USER_NAME = "user_name";
     private static final String PHONE_NUMBERS = "phone_numbers";
+    private static final String USER_EXISTS_EXCEPTION
+            = "Cannot add user with name %s. It already exists in a database!%n";
+    public static final String NO_PHONE_NUMBER_EXCEPTION
+            = "Cannot add user without at lest one phone number!";
 
     public UserTableModel() {
         super(new String[]{USER_NAME, PHONE_NUMBERS}, 0);
@@ -22,7 +26,13 @@ public class UserTableModel extends DefaultTableModel {
     }
 
     public void addUser(User user) {
-        addRow(new Object[]{user.username(), user.phoneNumbers()});
+        if (user.phoneNumbers() == null || user.phoneNumbers().isEmpty()) {
+            System.out.println(NO_PHONE_NUMBER_EXCEPTION);
+        } else if (getUserByUsername(user.username()).isPresent()) {
+            System.out.printf(USER_EXISTS_EXCEPTION, user.username());
+        } else {
+            addRow(new Object[]{user.username(), user.phoneNumbers()});
+        }
     }
 
     public User getUser(int rowIndex) {
