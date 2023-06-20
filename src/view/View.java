@@ -1,6 +1,10 @@
 package view;
 
 import controller.Controller;
+import entity.PhoneNumber;
+import entity.User;
+import view.teblemodel.PhoneNumberTableModel;
+import view.teblemodel.UserTableModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -11,7 +15,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.TableModel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -28,21 +31,27 @@ public class View {
     private static final String SEARCH_PANEL_LABEL = "Name:";
     private static final String SEARCH_BUTTON_LABEL = "Search";
     private static final int SEARCH_PANEL_COLUMNS = 20;
-    private static final Rectangle CONTENT_BOUNDS = new Rectangle(60, 60, 480, 180);
-    private static final Rectangle BACKGROUND_BOUNDS = new Rectangle(0, 0, 600, 300);
-    private static final Dimension WINDOW_SIZE = new Dimension(600, 300);
+    private static final Rectangle CONTENT_BOUNDS = new Rectangle(60, 60, 680, 380);
+    private static final Rectangle BACKGROUND_BOUNDS = new Rectangle(0, 0, 800, 500);
+    private static final Dimension WINDOW_SIZE = new Dimension(800, 500);
+    private static final int TABLES_DIVIDER_LOCATION = 335;
     private Controller controller;
     private JFrame frame;
-    private JPanel trianglePanel;
+    private JPanel backgroundPanel;
     private JPanel searchPanel;
     private JScrollPane userTable;
+    private JScrollPane phoneNumberTable;
 
     public void setController(Controller controller) {
         this.controller = controller;
     }
 
-    public void setModel(TableModel userTableModel) {
-        this.userTable = new JScrollPane(new JTable(userTableModel));
+    public void setUserTableModel(List<User> users) {
+        this.userTable = new JScrollPane(new JTable(new UserTableModel(users)));
+    }
+
+    public void setPhoneNumberTableModel(List<PhoneNumber> phoneNumbers) {
+        this.phoneNumberTable = new JScrollPane(new JTable(new PhoneNumberTableModel(phoneNumbers)));
     }
 
     public void createAndShowGUI() {
@@ -52,10 +61,10 @@ public class View {
         composeFrame();
     }
 
-    public void displayPhoneNumbers(List<String> phoneNumbers) {
+    public void displayPhoneNumbers(List<PhoneNumber> phoneNumbers) {
         StringBuilder message = new StringBuilder(PHONE_NUMBERS_HEADER);
-        for (String phoneNumber : phoneNumbers) {
-            message.append(phoneNumber).append("\n");
+        for (PhoneNumber phoneNumber : phoneNumbers) {
+            message.append(phoneNumber.getPhoneNumber()).append("\n");
         }
         JOptionPane.showMessageDialog(frame, message.toString());
     }
@@ -69,7 +78,7 @@ public class View {
     }
 
     public void hideTriangle() {
-        trianglePanel.setVisible(false);
+        backgroundPanel.setVisible(false);
     }
 
     private void drawFrame(){
@@ -80,7 +89,7 @@ public class View {
     }
 
     private void drawTrianglePanel() {
-        trianglePanel = new JPanel() {
+        backgroundPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -103,14 +112,16 @@ public class View {
     }
 
     private void composeFrame(){
-        JSplitPane mainContent = new JSplitPane(JSplitPane.VERTICAL_SPLIT, searchPanel, userTable);
-        mainContent.setBounds(CONTENT_BOUNDS);
-        trianglePanel.setBounds(BACKGROUND_BOUNDS);
+        JSplitPane tablesPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, userTable, phoneNumberTable);
+        tablesPanel.setDividerLocation(TABLES_DIVIDER_LOCATION);
+        JSplitPane foregroundPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT, searchPanel, tablesPanel);
+        foregroundPanel.setBounds(CONTENT_BOUNDS);
+        backgroundPanel.setBounds(BACKGROUND_BOUNDS);
 
         JLayeredPane layeredPane = new JLayeredPane();
         layeredPane.setPreferredSize(WINDOW_SIZE);
-        layeredPane.add(trianglePanel, JLayeredPane.DEFAULT_LAYER);
-        layeredPane.add(mainContent, JLayeredPane.POPUP_LAYER);
+        layeredPane.add(backgroundPanel, JLayeredPane.DEFAULT_LAYER);
+        layeredPane.add(foregroundPanel, JLayeredPane.POPUP_LAYER);
 
         frame.add(layeredPane);
         frame.pack();

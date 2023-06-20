@@ -1,6 +1,17 @@
 package entity;
 
-import java.util.List;
+public class User extends Entity {
+    private String userName;
 
-public record User(String username, List<String> phoneNumbers) {
+    public User(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 }
